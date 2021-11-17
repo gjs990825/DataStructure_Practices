@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stack>
 #include <queue>
+#include <functional>
 
 using namespace std;
 
@@ -17,7 +18,13 @@ void CheckSortingResult(Elem_t* a, int length, Elem_t* (sort)(Elem_t* a, int n),
 	printf("[%s]\n", name);
 	DumpArray(a, length);
 	DumpArray(sort(a, length), length);
-	printf("[%s]\n\n", (VERIFY(a, length) ? "Passed!" : "FAILED!!!"));
+	bool res = VERIFY(a, length);
+	printf("[%s]\n\n", (res ? "Passed!" : "FAILED!!!"));
+
+	if (!res) {
+		cout << "EXIT!" << endl;
+		exit(-1);
+	}
 }
 
 void CheckSortingResult(Elem_t* (sort)(Elem_t* a, int n), const char* name) {
@@ -199,6 +206,16 @@ SeqList SeqList_Generate(int length)
 	SeqList l;
 	for (int i = 0; i < length; i++)
 		l.data[i] = i;
+	l.length = length;
+	return l;
+}
+
+SeqList SeqList_GenerateRand(int length)
+{
+	SeqList l;
+	srand(0);
+	for (int i = 0; i < length; i++)
+		l.data[i] = rand() % length;
 	l.length = length;
 	return l;
 }

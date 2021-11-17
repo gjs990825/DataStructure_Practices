@@ -632,9 +632,7 @@ void heapify(Elem_t a[], int i, int n) {
 	if (l < n && a[l] > a[p]) p = l;
 	if (r < n && a[r] > a[p]) p = r;
 	if (p != i) {
-		Elem_t t = a[i];
-		a[i] = a[p];
-		a[p] = t;
+		swap(a[i], a[p]);
 		heapify(a, p, n);
 	}
 }
@@ -669,7 +667,7 @@ Elem_t* Sort_ShellSort(Elem_t a[], int n) {
 // 归并排序 递归
 void merge_sort(Elem_t a[], Elem_t b[], int start, int end) {
 	if (start >= end) return;
-	int mid = (end - start) / 2 + start;
+	int mid = (start + end) / 2;
 	int start1 = start, end1 = mid;
 	int start2 = mid + 1, end2 = end;
 	merge_sort(a, b, start1, end1);
@@ -949,6 +947,7 @@ int main() {
 	cout << Search_BinaryGEKey(SeqList_Generate(10).data, 10, -1) << endl;
 
 	cout << "/************************排序************************/" << endl;
+
 	CheckSort(Sort_InsertionSort);
 	CheckSort(Sort_BinaryInsertionSort);
 	CheckSort(Sort_BubbleSort);

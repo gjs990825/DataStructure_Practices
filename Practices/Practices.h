@@ -107,3 +107,5 @@ bool Graph_IsConnected(MGraph G);
 //#define SEARCH
 //#define GRAPH
 //#define SORT
+
+// auto xxSort = [](Elem_t* a, int n)->Elem_t* { ... };

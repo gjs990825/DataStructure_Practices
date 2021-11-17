@@ -51,6 +51,7 @@ typedef struct SeqList {
 } SeqList;
 
 SeqList SeqList_Generate(int length);
+SeqList SeqList_GenerateRand(int length);
 
 #define DumpSeqList(l) DumpArray(l.data, l.length)
 
