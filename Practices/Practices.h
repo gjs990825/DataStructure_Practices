@@ -6,8 +6,12 @@
 /************************线性表************************/
 // 逆转顺序表中的所有元素
 Elem_t* SeqList_Reverse(Elem_t a[], int n);
-// 删除线性链表中数据为item的节点
-LinkList& LinkList_PurgeItem(LinkList& l, Elem_t item);
+// 逆转顺序表中范围内元素
+Elem_t* SeqList_ReverseRange(int a[], int l, int h);
+// 循环右移
+Elem_t* SeqList_Ror(Elem_t* a, int n, int i);
+// 循环左移
+Elem_t* SeqList_Rol(Elem_t* a, int n, int i);
 // 逆转线性链表
 LinkList& LinkList_Reverse(LinkList& l);
 // 拷贝线性链表
@@ -30,6 +34,7 @@ bool SeqList_DeleteDuplicate(SeqList& l);
 void LinkList_WithHeadReverseOutput(LinkList l);
 // 删除带头节点的单链表L中所有值为x的节点
 void LinkList_WithHeadNodeDelX(LinkList& l, Elem_t x);
+void LinkList_WithHeadNodeDelX_2(LinkList& l, Elem_t x);
 
 /************************二叉树************************/
 // 遍历

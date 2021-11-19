@@ -11,46 +11,39 @@ Elem_t* SeqList_Reverse(Elem_t a[], int n) {
 	return a;
 }
 
-Elem_t* SeqList_ReverseRange(int a[], int l, int h) {
+// 逆转顺序表中范围内元素
+Elem_t* SeqList_ReverseRange(Elem_t a[], int l, int h) {
 	for (int i = l, j = h; i < j; i++, j--)
 		swap(a[i], a[j]);
 	return a;
 }
 
+// 循环右移
+Elem_t* SeqList_Ror(Elem_t* a, int n, int i) {
+	SeqList_ReverseRange(a, 0, n - i - 1);
+	SeqList_ReverseRange(a, n - i, n - 1);
+	SeqList_ReverseRange(a, 0, n - 1);
+	return a;
+}
 
-// 删除线性链表中数据为item的节点
-LinkList& LinkList_PurgeItem(LinkList& l, Elem_t item) {
-	if (l == NULL) return l;
-	LinkNode* cur = l->next, * pre = l;
-	while (cur != NULL) {
-		if (cur->data == item) {
-			pre->next = cur->next;
-			free(cur);
-			cur = pre->next;
-		}
-		else {
-			pre = cur;
-			cur = cur->next;
-		}
-	}
-	if (l->data == item) {
-		pre = l;
-		l = l->next;
-		free(pre);
-	}
-	return l;
+// 循环左移
+Elem_t* SeqList_Rol(Elem_t* a, int n, int i) {
+	SeqList_ReverseRange(a, 0, i - 1);
+	SeqList_ReverseRange(a, i, n - 1);
+	SeqList_ReverseRange(a, 0, n - 1);
+	return a;
 }
 
 // 逆转线性链表
 LinkList& LinkList_Reverse(LinkList& l) {
-	LinkNode* pre = NULL, * cur = l, * tmp;
+	LinkNode* l2 = NULL, * cur = l, * tmp;
 	while (cur != NULL) {
 		tmp = cur->next;
-		cur->next = pre;
-		pre = cur;
+		cur->next = l2;
+		l2 = cur;
 		cur = tmp;
 	}
-	l = pre;
+	l = l2;
 	return l;
 }
 
@@ -402,18 +395,15 @@ void BTree_Swap(BTree T) {
 
 // 交换左右子树 非递归（前序遍历）
 void BTree_SwapIterative(BTree T) {
-	BTreeNode* s[MAX_STACK], * p = T, * tmp;
+	BTreeNode* s[MAX_STACK], * p = T;
 	int top = -1;
 	while (p != NULL || top != -1) {
 		while (p != NULL) {
+			swap(p->lchild, p->rchild);
 			s[++top] = p;
 			p = p->lchild;
 		}
-		p = s[top--];
-		tmp = p->lchild;
-		p->lchild = p->rchild;
-		p->rchild = tmp;
-		p = p->lchild;
+		p = s[top--]->rchild;
 	}
 }
 
@@ -563,7 +553,7 @@ Elem_t* Sort_BinaryInsertionSort(Elem_t a[], int n) {
 			if (a[m] > t) h = m - 1;
 			else l = m + 1;
 		}
-		for (j = i - 1; j >= l; j--)
+		for (j = i - 1; j >= l; j--) // j >= l; !!!
 			a[j + 1] = a[j];
 		a[l] = t;
 	}
@@ -575,7 +565,7 @@ Elem_t* Sort_BubbleSort(Elem_t a[], int n) {
 	int i, j; bool flag;
 	for (i = 0; i < n - 1; i++) {
 		flag = false;
-		for (j = 0; j < n - i - 1; j++) {
+		for (j = 0; j < n - i - 1; j++) { // j < n - i - 1; !!!
 			if (a[j] > a[j + 1]) {
 				swap(a[j], a[j + 1]);
 				flag = true;
@@ -842,13 +832,16 @@ void Remove_DuplicatedAbsoluteValue(LinkList L, int N) {
 
 int main() {
 	cout << "/************************线性表************************/" << endl;
-	DumpArray(In(), 10);
-	DumpArray(SeqList_Reverse(In(), 10), 10);
+	DumpArray(SeqList_Generate(10).data, 10);
+	DumpArray(SeqList_Reverse(SeqList_Generate(10).data, 10), 10);
+
+	SeqList sq1 = SeqList_Generate(10);
+	DumpSeqList(sq1);
+	DumpArray(SeqList_Ror(sq1.data, sq1.length, 3), sq1.length);
+	DumpArray(SeqList_Rol(sq1.data, sq1.length, 6), sq1.length);
 
 	LinkList l = LinkList_Generate(10);
 	DumpLinkList(l);
-	DumpLinkList(LinkList_PurgeItem(l, 0));
-	DumpLinkList(LinkList_PurgeItem(l, 2));
 	DumpLinkList(LinkList_Reverse(l));
 
 	LinkList l2 = LinkList_Generate(4);
@@ -856,7 +849,7 @@ int main() {
 	DumpLinkList(l2_copy);
 	cout << (l2 == l2_copy) << endl;
 
-	LinkList l3 = LinkList_Generate(3);
+	LinkList l3 = LinkList_Generate(5);
 	LinkList l4 = LinkList_Generate(3);
 	LinkList l5 = LinkList_Merge(l3, l4);
 	DumpLinkList(l5);
@@ -946,8 +939,8 @@ int main() {
 	DumpSeqList(sl1);
 	cout << Search_BinaryGEKey(SeqList_Generate(10).data, 10, -1) << endl;
 
-	cout << "/************************排序************************/" << endl;
 
+	cout << "/************************排序************************/" << endl;
 	CheckSort(Sort_InsertionSort);
 	CheckSort(Sort_BinaryInsertionSort);
 	CheckSort(Sort_BubbleSort);
@@ -973,7 +966,7 @@ int main() {
 	cout << Min_D(S1, 3, S2, 4, S3, 5) << endl;
 
 
-	int A[] = { 5,5,6,7,8,8,9,1,2,2,3,4,5 };
+	int A[] = {5, 5, 6, 7, 8, 8, 9, 1, 2, 2, 3, 4, 5};
 	int A_len = sizeof(A) / sizeof(A[0]);
 	DumpArray(A, A_len);
 	SplitEvenAndOdd(A, A_len);
@@ -1011,7 +1004,7 @@ int main() {
 	RollToTheLeft(testArray2, 5, 3);
 	DumpArray(testArray2, 5);
 
-	auto testLinkList = [](LinkList &L) -> LinkList& {
+	auto testLinkList = [](LinkList& L) -> LinkList& {
 		LinkNode* pre = NULL, * cur = L, * tmp;
 		while (cur != NULL) {
 			tmp = cur->next;
@@ -1025,5 +1018,6 @@ int main() {
 
 	LinkList testL = LinkList_Generate(11);
 	DumpLinkList(testLinkList(testL));
+
 
 }
