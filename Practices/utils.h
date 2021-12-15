@@ -1,6 +1,7 @@
 #pragma once
 
 #include <limits>
+#include <iostream>
 
 using namespace std;
 
@@ -34,6 +35,7 @@ typedef struct LinkNode {
 } LinkNode, * LinkList;
 
 LinkList LinkList_Generate(int length);
+LinkList LinkList_GenerateWithHead(int length);
 LinkList LinkList_Generate(int* a, int n);
 LinkList LinkList_GenerateReverse(int length);
 LinkList LinkList_GenerateRand(void);
@@ -44,6 +46,11 @@ void DumpLinkListCLWithHead(LinkList l);
 LinkList LinkListCL_CreateWithoutHead(int n);
 void DumpLinkListCLWithoutHead(LinkList l);
 
+typedef struct DLinkNode {
+	Elem_t data;
+	struct DLinkNode* prior, * next;
+} DLinkNode, * DLinkList;
+
 #define SeqList_MaxLength 50
 typedef struct SeqList {
 	Elem_t data[SeqList_MaxLength];
@@ -51,6 +58,7 @@ typedef struct SeqList {
 } SeqList;
 
 SeqList SeqList_Generate(int length);
+SeqList SeqList_Generate(int* a, int n);
 SeqList SeqList_GenerateRand(int length);
 
 #define DumpSeqList(l) DumpArray(l.data, l.length)
@@ -64,6 +72,7 @@ BTree BTreeInit(Elem_t data);
 BTree BTreeInit();
 void BTree_Create(BTree& T);
 void BTree_Create(BTree& T, const char*& s);
+void BTree_CreateExpression(BTree& T, const char*& s);
 void BTree_VisitNode(BTreeNode* T);
 void BTree_PreOrderTraverse(BTree T);
 void BTree_InOrderTraverse(BTree T);
@@ -73,8 +82,17 @@ void BTree_PreOrderTraverseIterative(BTree T);
 void BTree_LevelOrderTraverse(BTree T);
 void BTree_Destroy(BTree& T);
 
+typedef struct ThreadNode {
+	Elem_t data;
+	struct ThreadNode* lchild, * rchild;
+	int ltag, rtag;
+} ThreadNode, * ThreadTree;
+
 // ADD A GODDAMN NEW LINE
 #define NL(XXX) do { XXX; std::cout << std::endl; } while(0)
+
+void DumpExpression(BTree T, int depth);
+void DumpExpression(BTree T);
 
 void BTree_Dump(BTreeNode* tree);
 
@@ -91,3 +109,15 @@ typedef struct {
 
 MGraph Graph_GenerateConnected();
 MGraph Graph_GenerateDisconnected();
+
+#define COMMENT(M) do { std::cout << "\n\n" << M << std::endl; } while (0)
+#define EXE_OUT(X) do { std::cout << X << std::endl; } while (0)
+#define DIVIDER(X)                           \
+    do                                       \
+    {                                        \
+        std::cout                            \
+            << "\n-------------------------" \
+            << X                             \
+            << "-------------------------\n" \
+            << std::endl;                    \
+    } while (0)

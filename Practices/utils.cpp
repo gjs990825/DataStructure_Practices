@@ -8,13 +8,17 @@ using namespace std;
 
 void DumpArray(Elem_t* a, int length) {
 	cout << "[ ";
-	for (int i = 0; i < length; i++)
-		cout << *a++ << ", ";
-	cout << "](" << length << ")";
+	for (int i = 0; i < length; i++) {
+		cout << *a++;
+		if (i + 1 != length)
+			cout << ", ";
+	}
+
+	cout << " ](" << length << ")";
 	cout << endl;
 }
 
-void CheckSortingResult(Elem_t* a, int length, Elem_t* (sort)(Elem_t* a, int n), const char* name) {	
+void CheckSortingResult(Elem_t* a, int length, Elem_t* (sort)(Elem_t* a, int n), const char* name) {
 	printf("[%s]\n", name);
 	DumpArray(a, length);
 	DumpArray(sort(a, length), length);
@@ -97,7 +101,18 @@ LinkList LinkList_Generate(int length) {
 	return l;
 }
 
-LinkList LinkList_Generate(int *a, int n) {
+LinkList LinkList_GenerateWithHead(int length) {
+	LinkList l = NULL;
+	for (int i = length - 1; i >= -1; i--) {
+		LinkNode* n = new LinkNode;
+		n->data = i;
+		n->next = l;
+		l = n;
+	}
+	return l;
+}
+
+LinkList LinkList_Generate(int* a, int n) {
 	LinkList l = NULL;
 	for (int i = n - 1; i >= 0; i--) {
 		LinkNode* n = new LinkNode;
@@ -134,13 +149,15 @@ LinkList LinkList_GenerateRandWithHead(void) {
 
 void DumpLinkList(LinkList l) {
 	int count = 0;
-	cout << "|";
+	cout << "| ";
 	while (l != NULL) {
-		cout << l->data << " -> ";
+		cout << l->data;
+		if (l->next)
+			cout << " -> ";
 		l = l->next;
 		count++;
 	}
-	cout << "|(" << count << ")" << endl;
+	cout << " |(" << count << ")" << endl;
 }
 
 LinkList LinkListCL_CreateWithHead(int n) {
@@ -174,7 +191,7 @@ LinkList LinkListCL_CreateWithoutHead(int n) {
 }
 
 void DumpLinkListCLWithHead(LinkList l) {
-	LinkNode *cur = l->next;
+	LinkNode* cur = l->next;
 	int count = 0;
 	cout << "|";
 	while (cur != l) {
@@ -192,7 +209,7 @@ void DumpLinkListCLWithoutHead(LinkList l) {
 	}
 	cout << "|" << l->data << " -> ";
 	int count = 1;
-	LinkNode *cur = l->next;
+	LinkNode* cur = l->next;
 	while (cur != l) {
 		cout << cur->data << " -> ";
 		cur = cur->next;
@@ -207,6 +224,15 @@ SeqList SeqList_Generate(int length)
 	for (int i = 0; i < length; i++)
 		l.data[i] = i;
 	l.length = length;
+	return l;
+}
+
+SeqList SeqList_Generate(int* a, int n)
+{
+	SeqList l;
+	for (int i = 0; i < n; i++)
+		l.data[i] = a[i];
+	l.length = n;
 	return l;
 }
 
@@ -261,6 +287,18 @@ void BTree_Create(BTree& T, const char*& s) {
 			T = BTreeInit(ch - '0');
 		BTree_Create(T->lchild, s);
 		BTree_Create(T->rchild, s);
+	}
+}
+
+void BTree_CreateExpression(BTree& T, const char*& s) {
+	char ch = *s++;
+	if (ch == ' ') {
+		T = NULL;
+	}
+	else {
+		T = BTreeInit(ch);
+		BTree_CreateExpression(T->lchild, s);
+		BTree_CreateExpression(T->rchild, s);
 	}
 }
 
@@ -431,42 +469,57 @@ void BTree_Dump(BTreeNode* tree)
 		printf("%s\n", s[i]);
 }
 
-#define _NUM 5
+void DumpExpression(BTree T, int depth) {
+	if (T == NULL)
+		return;
+	if (depth != 1 && (T->rchild || T->lchild))
+		cout << '(';
+	DumpExpression(T->lchild, depth + 1);
+	cout << (char)T->data;
+	DumpExpression(T->rchild, depth + 1);
+	if (depth != 1 && (T->rchild || T->lchild))
+		cout << ')';
+}
+
+void DumpExpression(BTree T) {
+	NL(DumpExpression(T, 1));
+}
+
 MGraph Graph_GenerateConnected() {
 	MGraph G;
-	int a[_NUM][_NUM] = {
+	int a[5][5] = {
 		{0, 0, 0, 1, 1},
 		{0, 0, 1, 0, 1},
 		{0, 1, 0, 1, 0},
 		{1, 0, 1, 0, 0},
 		{1, 1, 0, 0, 0},
 	};
-	for (int i = 0; i < _NUM; i++) {
+	for (int i = 0; i < 5; i++) {
 		G.verties[i] = i + 1;
-		for (int j = 0; j < _NUM; j++)
+		for (int j = 0; j < 5; j++)
 			G.edges[i][j] = a[i][j];
 	}
-	G.edgeNum = _NUM;
-	G.vexNum = _NUM;
+	G.edgeNum = 5;
+	G.vexNum = 5;
 	return G;
 }
 
 MGraph Graph_GenerateDisconnected() {
 	MGraph G;
-	int a[_NUM][_NUM] = {
+	int a[5][5] = {
 		{0, 0, 0, 1, 1},
 		{0, 0, 0, 0, 0},
 		{0, 0, 0, 1, 0},
 		{1, 0, 1, 0, 0},
 		{1, 0, 0, 0, 0},
 	};
-	for (int i = 0; i < _NUM; i++) {
+	for (int i = 0; i < 5; i++) {
 		G.verties[i] = i + 1;
-		for (int j = 0; j < _NUM; j++)
+		for (int j = 0; j < 5; j++)
 			G.edges[i][j] = a[i][j];
 	}
-	G.edgeNum = _NUM;
-	G.vexNum = _NUM;
+	G.edgeNum = 3;
+	G.vexNum = 5;
 	return G;
 }
 
